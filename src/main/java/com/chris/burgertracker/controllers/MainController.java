@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -41,4 +42,20 @@ public class MainController {
 		}
 	}
 
+	@RequestMapping("/edit/{id}")
+	public String editBurger(@PathVariable("id") Long id, @ModelAttribute("burger") Burger burger, Model model) {
+		model.addAttribute("burger", burgerService.findBurger(id));
+		return "edit.jsp";
+	}
+	
+	@PostMapping("/edit/{id}")
+	public String updateBurger(@Valid @ModelAttribute("burger") Burger burger, BindingResult result, @PathVariable("id") Long id, Model model) {
+		if(result.hasErrors()) {
+			model.addAttribute("burger", burger);
+			return "index.jsp";
+		} else {
+			burgerService.updateBurger(burger);
+			return "redirect:/";
+		}
+	}
 }
